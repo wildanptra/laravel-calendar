@@ -7,16 +7,109 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script>
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script> --}}
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.js"></script> --}}
+
+<!-- fullcalendar css  -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.css' rel='stylesheet' />
+
 <body>
 
-  <div class="container mt-2">
-      <div class="response"></div>
-      <div id='calendar'></div>
-  </div>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="alert alert-warning" role="alert">
+                    <h4>Form Kegiatan</h4>
+                </div>
+                <div class="card">
+                    <form action="{{ route('fullcalendareventmaster.create') }}" method="POST"> @csrf
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="form-label">Keterangan Kegiatan</div>
+                                <textarea name="title" class="form-control" id="title" rows="2"></textarea>
+                            </div>
+                            <div class="form-group mt-4">
+                                <div class="form-label">Tgl Mulai</div>
+                                <input type="datetime-local" class="form-control" name="start" id="start">
+                            </div>
+                            <div class="form-group mt-4">
+                                <div class="form-label">Tgl Selesai</div>
+                                <input type="datetime-local" class="form-control" name="end" id="end">
+                            </div>
+                            <div class="form-group mt-4">
+                                <button type="submit" class="btn btn-success">Simpan</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
 
-  <script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+
+        var data = {!! json_encode($data->toArray()) !!};
+
+        console.log(data)
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: data,
+                selectOverlap: function (event) {
+                    return event.rendering === 'background';
+                },
+                // eventClick: function (event) {
+                    // Swal.fire({
+                    //     title: 'Apakah anda yakin ?',
+                    //     text: "akan menghapus pasien pada invoice ini?",
+                    //     icon: 'warning',
+                    //     showCancelButton: true,
+                    //     confirmButtonColor: '#3085d6',
+                    //     cancelButtonColor: '#d33',
+                    //     }).then((result) => {
+                    //     if (result.isConfirmed) {
+                    //         window.location.href = "{{ route('fullcalendareventmaster.destroy') }}";
+                    //     }
+                    // });
+
+                //     var deleteMsg = confirm("Do you really want to delete?");
+                //     if (deleteMsg) {
+                //         $.ajax({
+                //             type: "POST",
+                //             url: '{{ route('fullcalendareventmaster.destroy') }}',
+                //             data: "&id=" + event.id,
+                //             success: function (response) {
+                //                 // console.log(response);
+                //                 if(parseInt(response) > 0) {
+                //                     $('#calendar').fullCalendar('removeEvents', event.id);
+                //                     console.log(event.id);
+                //                 }
+                //             }
+                //         });
+                //     }
+                // }
+            });
+
+            calendar.render();
+        });
+    </script>
+
+  {{-- <script>
     $(document).ready(function () {
 
             var SITEURL = "{{url('/')}}";
@@ -109,8 +202,6 @@
       $(".response").html(""+message+"");
       setInterval(function() { $(".success").fadeOut(); }, 1000);
     }
-  </script>
-
-
+  </script> --}}
 </body>
 </html>

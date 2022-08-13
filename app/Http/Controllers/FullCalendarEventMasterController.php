@@ -19,17 +19,21 @@ class FullCalendarEventMasterController extends Controller
          $data = Event::whereDate('start', '>=', $start)->whereDate('end',   '<=', $end)->get(['id','title','start', 'end']);
          return Response::json($data);
         }
-        return view('fullcalendar');
+
+        $data = Event::all();
+        return view('fullcalendar', compact('data'));
     }
 
     public function create(Request $request)
     {
-        $insertArr = [ 'title' => $request->title,
-                       'start' => $request->start,
-                       'end' => $request->end
-                    ];
-        $event = Event::insert($insertArr);
-        return Response::json($event);
+        $insertArr = [
+            'title' => $request->title,
+            'start' => $request->start,
+            'end'   => $request->end
+        ];
+        // dd($insertArr);
+        $event = Event::create($insertArr);
+        return redirect()->back();
     }
 
     public function update(Request $request)
@@ -44,7 +48,8 @@ class FullCalendarEventMasterController extends Controller
     public function destroy(Request $request)
     {
         $event = Event::where('id', $request->id)->delete();
+        // dd($event);
 
-        return Response::json($event);
+        return redirect()->back();
     }
 }
